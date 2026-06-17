@@ -1,13 +1,40 @@
-from config import BASE_URL, REPOSITORIES
-from github_api import github_get
+import pandas as pd
+from contributors import get_contributors
 
-owner, repo = REPOSITORIES[0]
+# GitHub repositories
+REPOSITORIES = [
+    ("facebook", "react"),
+    ("microsoft", "vscode"),
+    ("tensorflow", "tensorflow")
+]
 
-url = f"{BASE_URL}/repos/{owner}/{repo}"
+all_contributors = []
 
-data = github_get(url)
+for owner, repo in REPOSITORIES:
 
-if data:
-    print("Repository:", data["full_name"])
-    print("Stars:", data["stargazers_count"])
-    print("Forks:", data["forks_count"])
+    print(f"\nFetching contributors from {owner}/{repo}...")
+
+    contributors = get_contributors(owner, repo, limit=50)
+
+    print(f"Collected {len(contributors)} contributors")
+
+    all_contributors.extend(contributors)
+
+# Create DataFrame
+df = pd.DataFrame(all_contributors)
+
+print("\nSample Data")
+print(df.head())
+
+print(f"\nTotal Contributors : {len(df)}")
+
+print("\nRepository-wise Count")
+print(df["repository"].value_counts())
+
+# Save CSV
+df.to_csv(
+    "data/raw/contributors_raw.csv",
+    index=False
+)
+
+print("\nSaved to data/raw/contributors_raw.csv")
