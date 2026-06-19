@@ -49,7 +49,7 @@ df["days_since_last_commit"] = (
 # -------------------------------------------------
 
 df["status"] = df["days_since_last_commit"].apply(
-    lambda x: "Inactive" if x > 180 else "Active"
+    lambda x: "Inactive" if x > 365 else "Active"
 )
 
 # -------------------------------------------------

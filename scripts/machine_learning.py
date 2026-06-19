@@ -20,7 +20,10 @@ df = pd.read_csv("data/processed/contributors_processed.csv")
 # Remove rows with missing values
 df = df.dropna()
 
-print(df.head())
+print("\nContributors with last commit < 365 days")
+print(df[df["days_since_last_commit"] < 365]["status"].value_counts())
+
+# print(df.head())
 
 # Convert target to numeric
 df["status"] = df["status"].map({
@@ -159,3 +162,19 @@ joblib.dump(
 
 print("\nBest Model :", best_name)
 print("Model saved successfully to outputs/best_model.pkl")
+
+
+
+print(".........................................................")
+
+print(
+    df[
+        (df["days_since_last_commit"] < 365) &
+        (df["status"] == 0)
+    ][
+        ["username",
+         "contributions",
+         "days_since_last_commit",
+         "status"]
+    ]
+)
