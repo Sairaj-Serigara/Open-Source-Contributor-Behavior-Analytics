@@ -1,10 +1,20 @@
-import os
 import pandas as pd
 
-contributors = pd.read_csv("data/raw/contributors_raw.csv")
-commits = pd.read_csv("data/raw/commits.csv")   # <-- IMPORTANT
-prs = pd.read_csv("data/raw/contributor_prs.csv")
-issues = pd.read_csv("data/raw/contributor_issues.csv")
+contributors = pd.read_csv(
+    "data/raw/contributors_raw.csv"
+)
+
+commits = pd.read_csv(
+    "data/raw/commits.csv"
+)
+
+prs = pd.read_csv(
+    "data/raw/contributor_prs.csv"
+)
+
+issues = pd.read_csv(
+    "data/raw/contributor_issues.csv"
+)
 
 # Merge everything
 df = contributors.merge(
@@ -25,7 +35,7 @@ df = df.merge(
     how="left"
 )
 
-# Fill numeric columns
+# Fill numeric values
 numeric_cols = [
     "recent_commits",
     "avg_gap_days",
@@ -42,7 +52,7 @@ for col in numeric_cols:
     if col in df.columns:
         df[col] = df[col].fillna(0)
 
-# Fill date columns
+# Fill date values
 date_cols = [
     "first_commit",
     "last_commit",
@@ -56,12 +66,10 @@ for col in date_cols:
     if col in df.columns:
         df[col] = df[col].fillna("Never")
 
-os.makedirs("data/processed", exist_ok=True)
-
 df.to_csv(
     "data/processed/contributor_features.csv",
     index=False
 )
 
-print(df.columns.tolist())
 print(df.shape)
+print(df.head())

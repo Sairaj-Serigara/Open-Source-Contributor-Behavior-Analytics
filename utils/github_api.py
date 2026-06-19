@@ -1,5 +1,10 @@
 import time
 import requests
+import os
+import json
+
+MAX_COMMITS = 200
+PER_PAGE = 100
 
 from config import (
     BASE_URL,
@@ -121,3 +126,128 @@ def get_recent_commits(owner, repo, username):
             break
 
     return commits
+
+
+def get_repository_pull_requests(owner, repo, max_prs=1000):
+
+    cache_dir = "data/raw/pr_cache"
+    os.makedirs(cache_dir, exist_ok=True)
+
+    cache_file = os.path.join(
+        cache_dir,
+        f"{repo}_prs.json"
+    )
+
+    # -----------------------------
+    # Load cache if available
+    # -----------------------------
+    if os.path.exists(cache_file):
+
+        print(f"Loading cached PRs for {repo}")
+
+        with open(cache_file, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    # -----------------------------
+    # Download from GitHub
+    # -----------------------------
+    prs = []
+
+    per_page = 100
+    pages = max_prs // per_page
+
+    for page in range(1, pages + 1):
+
+        print(f"Downloading {repo} PR page {page}")
+
+        endpoint = f"/repos/{owner}/{repo}/pulls"
+
+        params = {
+            "state": "all",
+            "sort": "updated",
+            "direction": "desc",
+            "per_page": per_page,
+            "page": page
+        }
+
+        data = github_get(endpoint, params)
+
+        if not data:
+            break
+
+        prs.extend(data)
+
+        if len(data) < per_page:
+            break
+
+    # -----------------------------
+    # Save cache
+    # -----------------------------
+    with open(cache_file, "w", encoding="utf-8") as f:
+        json.dump(prs, f)
+
+    print(f"Saved cache -> {cache_file}")
+
+    return prs
+
+
+
+
+def get_repository_issues(owner, repo, max_issues=1000):
+
+    import os
+    import json
+
+    cache_dir = "data/raw/issues_cache"
+    os.makedirs(cache_dir, exist_ok=True)
+
+    cache_file = os.path.join(
+        cache_dir,
+        f"{repo}_issues.json"
+    )
+
+    # -----------------------------
+    # Load cache
+    # -----------------------------
+    if os.path.exists(cache_file):
+
+        print(f"Loading cached issues for {repo}")
+
+        with open(cache_file, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    issues = []
+
+    per_page = 100
+    pages = max_issues // per_page
+
+    for page in range(1, pages + 1):
+
+        print(f"Downloading {repo} issue page {page}")
+
+        endpoint = f"/repos/{owner}/{repo}/issues"
+
+        params = {
+            "state": "all",
+            "sort": "updated",
+            "direction": "desc",
+            "per_page": per_page,
+            "page": page
+        }
+
+        data = github_get(endpoint, params)
+
+        if not data:
+            break
+
+        issues.extend(data)
+
+        if len(data) < per_page:
+            break
+
+    with open(cache_file, "w", encoding="utf-8") as f:
+        json.dump(issues, f)
+
+    print(f"Saved cache -> {cache_file}")
+
+    return issues
