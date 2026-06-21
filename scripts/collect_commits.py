@@ -17,17 +17,13 @@ def process_contributor(row):
 
         try:
 
-            last_commit = get_last_commit(
-                owner,
-                repo,
-                username
-            )
+            last_commit = get_last_commit(owner, repo, username)
 
             return {
                 "repository": repository,
                 "username": username,
                 "contributions": row["contributions"],
-                "last_commit": last_commit
+                "last_commit": last_commit,
             }
 
         except Exception as e:
@@ -40,16 +36,17 @@ def process_contributor(row):
                     "repository": repository,
                     "username": username,
                     "contributions": row["contributions"],
-                    "last_commit": None
+                    "last_commit": None,
                 }
 
             time.sleep(2)
+
 
 # Mapping repository names to GitHub owner/repository
 REPO_MAP = {
     "react": ("facebook", "react"),
     "vscode": ("microsoft", "vscode"),
-    "tensorflow": ("tensorflow", "tensorflow")
+    "tensorflow": ("tensorflow", "tensorflow"),
 }
 
 # Read contributors
@@ -63,10 +60,7 @@ for index, row in df.iterrows():
 
 with ThreadPoolExecutor(max_workers=10) as executor:
 
-    futures = [
-        executor.submit(process_contributor, row)
-        for _, row in df.iterrows()
-    ]
+    futures = [executor.submit(process_contributor, row) for _, row in df.iterrows()]
 
     completed = 0
 
@@ -81,8 +75,7 @@ with ThreadPoolExecutor(max_workers=10) as executor:
             print(f"Processed {completed}/{len(df)} contributors...")
 
             pd.DataFrame(results).to_csv(
-                "data/raw/contributor_commits.csv",
-                index=False
+                "data/raw/contributor_commits.csv", index=False
             )
 
 commit_df = pd.DataFrame(results)

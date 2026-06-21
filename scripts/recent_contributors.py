@@ -1,6 +1,7 @@
 from github_api import github_get
 from config import BASE_URL
 
+
 def get_recent_contributors(owner, repo, limit=50):
 
     recent = []
@@ -12,13 +13,7 @@ def get_recent_contributors(owner, repo, limit=50):
 
         url = f"{BASE_URL}/repos/{owner}/{repo}/commits"
 
-        commits = github_get(
-            url,
-            {
-                "per_page": 100,
-                "page": page
-            }
-        )
+        commits = github_get(url, {"per_page": 100, "page": page})
 
         if not commits:
             break
@@ -37,13 +32,15 @@ def get_recent_contributors(owner, repo, limit=50):
 
             seen.add(username)
 
-            recent.append({
-                "repository": repo,
-                "username": username,
-                "id": author["id"],
-                "profile_url": author["html_url"],
-                "contributions": None
-            })
+            recent.append(
+                {
+                    "repository": repo,
+                    "username": username,
+                    "id": author["id"],
+                    "profile_url": author["html_url"],
+                    "contributions": None,
+                }
+            )
 
             if len(recent) == limit:
                 break

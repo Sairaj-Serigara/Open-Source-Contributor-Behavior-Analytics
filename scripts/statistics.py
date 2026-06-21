@@ -32,44 +32,26 @@ print("\n" + "=" * 60)
 print("REPOSITORY-WISE CONTRIBUTIONS")
 print("=" * 60)
 
-print(
-    df.groupby("repository")["contributions"].describe()
-)
+print(df.groupby("repository")["contributions"].describe())
 
 
 print("\n" + "=" * 60)
 print("ACTIVE vs INACTIVE")
 print("=" * 60)
 
-print(
-    df.groupby("status")["contributions"].describe()
-)
+print(df.groupby("status")["contributions"].describe())
 
 
-
-df["status_numeric"] = df["status"].map({
-    "Active": 1,
-    "Inactive": 0
-})
+df["status_numeric"] = df["status"].map({"Active": 1, "Inactive": 0})
 
 
 print("\n" + "=" * 60)
 print("CORRELATION")
 print("=" * 60)
 
-print(
-    df[
-        [
-            "contributions",
-            "days_since_last_commit",
-            "status_numeric"
-        ]
-    ].corr()
-)
+print(df[["contributions", "days_since_last_commit", "status_numeric"]].corr())
 
 
 summary = df.describe(include="all")
 
-summary.to_csv(
-    "outputs/statistics_summary.csv"
-)
+summary.to_csv("outputs/statistics_summary.csv")

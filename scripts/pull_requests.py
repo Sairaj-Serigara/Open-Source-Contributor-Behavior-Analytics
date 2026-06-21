@@ -8,7 +8,7 @@ from utils.github_api import get_repository_pull_requests
 REPOSITORIES = [
     ("facebook", "react"),
     ("tensorflow", "tensorflow"),
-    ("microsoft", "vscode")
+    ("microsoft", "vscode"),
 ]
 
 rows = []
@@ -17,12 +17,7 @@ for owner, repo in REPOSITORIES:
 
     print(f"\nRepository : {repo}")
 
-    prs = get_repository_pull_requests(
-        owner,
-        repo,
-        max_prs=1000
-    )
-
+    prs = get_repository_pull_requests(owner, repo, max_prs=1000)
 
     os.makedirs("data/raw/pr_cache", exist_ok=True)
 
@@ -31,12 +26,9 @@ for owner, repo in REPOSITORIES:
 
     print(f"Downloaded {len(prs)} PRs")
 
-    contributors = defaultdict(lambda: {
-        "prs_opened": 0,
-        "prs_merged": 0,
-        "first_pr": None,
-        "last_pr": None
-    })
+    contributors = defaultdict(
+        lambda: {"prs_opened": 0, "prs_merged": 0, "first_pr": None, "last_pr": None}
+    )
 
     # -----------------------------
     # Process every PR
@@ -63,35 +55,28 @@ for owner, repo in REPOSITORIES:
     for username, stats in contributors.items():
 
         if stats["prs_opened"] > 0:
-            merge_rate = round(
-                stats["prs_merged"] /
-                stats["prs_opened"] * 100,
-                2
-            )
+            merge_rate = round(stats["prs_merged"] / stats["prs_opened"] * 100, 2)
         else:
             merge_rate = 0
 
-        rows.append({
-
-            "repository": repo,
-            "username": username,
-            "prs_opened": stats["prs_opened"],
-            "prs_merged": stats["prs_merged"],
-            "merge_rate": merge_rate,
-            "first_pr": stats["first_pr"],
-            "last_pr": stats["last_pr"]
-
-        })
+        rows.append(
+            {
+                "repository": repo,
+                "username": username,
+                "prs_opened": stats["prs_opened"],
+                "prs_merged": stats["prs_merged"],
+                "merge_rate": merge_rate,
+                "first_pr": stats["first_pr"],
+                "last_pr": stats["last_pr"],
+            }
+        )
 
 # -----------------------------
 # Save CSV
 # -----------------------------
 df = pd.DataFrame(rows)
 
-df.to_csv(
-    "data/raw/contributor_prs.csv",
-    index=False
-)
+df.to_csv("data/raw/contributor_prs.csv", index=False)
 
 print("\nSaved contributor_prs.csv")
 print(df.head())

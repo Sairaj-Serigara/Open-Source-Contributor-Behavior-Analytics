@@ -5,7 +5,7 @@ from contributors import get_contributors
 REPOSITORIES = [
     ("facebook", "react"),
     ("microsoft", "vscode"),
-    ("tensorflow", "tensorflow")
+    ("tensorflow", "tensorflow"),
 ]
 
 all_contributors = []
@@ -32,9 +32,6 @@ print("\nRepository-wise Count")
 print(df["repository"].value_counts())
 
 # Save CSV
-df.to_csv(
-    "data/raw/contributors_raw.csv",
-    index=False
-)
+df.to_csv("data/raw/contributors_raw.csv", index=False)
 
 print("\nSaved to data/raw/contributors_raw.csv")

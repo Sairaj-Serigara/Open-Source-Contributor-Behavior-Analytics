@@ -1,48 +1,57 @@
+import os
 import pandas as pd
 
-# -----------------------------
-# Load master dataset
-# -----------------------------
+# ----------------------------
+# Load data
+# ----------------------------
 
-df = pd.read_csv(
-    "data/processed/contributor_features.csv"
+df = pd.read_csv("data/processed/contributor_features.csv")
+
+# ----------------------------
+# Repository summary
+# ----------------------------
+
+summary = (
+    df.groupby("repository")
+    .agg(
+        contributors=("username", "nunique"),
+        total_contributions=("contributions", "sum"),
+        avg_recent_commits=("recent_commits", "mean"),
+        avg_commit_frequency=("commit_frequency", "mean"),
+        avg_gap_days=("avg_gap_days", "mean"),
+        total_prs=("prs_opened", "sum"),
+        merged_prs=("prs_merged", "sum"),
+        avg_merge_rate=("merge_rate", "mean"),
+        total_issues=("issues_opened", "sum"),
+        closed_issues=("issues_closed", "sum"),
+        avg_issue_close_rate=("issue_close_rate", "mean"),
+    )
+    .round(2)
+    .reset_index()
 )
 
-# -----------------------------
-# Repository Summary
-# -----------------------------
+# ----------------------------
+# Overall repository score
+# ----------------------------
 
-summary = df.groupby("repository").agg(
+summary["repository_score"] = (
+    summary["avg_commit_frequency"] * 0.30
+    + summary["avg_merge_rate"] * 0.30
+    + summary["avg_issue_close_rate"] * 0.20
+    + summary["avg_recent_commits"] * 0.20
+).round(2)
 
-    contributors=("username", "nunique"),
+summary = summary.sort_values("repository_score", ascending=False)
 
-    total_contributions=("contributions", "sum"),
+# ----------------------------
+# Save
+# ----------------------------
 
-    avg_commit_frequency=("commit_frequency", "mean"),
+os.makedirs("outputs", exist_ok=True)
 
-    avg_gap_days=("avg_gap_days", "mean"),
-
-    prs_opened=("prs_opened", "sum"),
-
-    prs_merged=("prs_merged", "sum"),
-
-    avg_merge_rate=("merge_rate", "mean"),
-
-    issues_opened=("issues_opened", "sum"),
-
-    issues_closed=("issues_closed", "sum"),
-
-    avg_issue_close_rate=("issue_close_rate", "mean")
-
-).reset_index()
-
-summary = summary.round(2)
-
-summary.to_csv(
-    "outputs/repository_summary.csv",
-    index=False
-)
+summary.to_csv("outputs/repository_summary.csv", index=False)
 
 print("\nRepository Summary\n")
-
 print(summary)
+
+print("\nSaved -> outputs/repository_summary.csv")

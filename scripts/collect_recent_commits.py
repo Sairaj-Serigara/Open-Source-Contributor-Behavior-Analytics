@@ -12,33 +12,21 @@ for p in sys.path:
     print(p)
 
 
-
 from utils.github_api import get_recent_commits
-from utils.helpers import (
-    commit_dates,
-    average_gap_days,
-    commit_frequency
-)
+from utils.helpers import commit_dates, average_gap_days, commit_frequency
 from utils.logger import log
-
 
 # -----------------------------
 # GitHub repositories
 # -----------------------------
 
-OWNER = {
-    "react": "facebook",
-    "tensorflow": "tensorflow",
-    "vscode": "microsoft"
-}
+OWNER = {"react": "facebook", "tensorflow": "tensorflow", "vscode": "microsoft"}
 
 # -----------------------------
 # Load contributors
 # -----------------------------
 
-contributors = pd.read_csv(
-    "data/raw/contributors_raw.csv"
-)
+contributors = pd.read_csv("data/raw/contributors_raw.csv")
 
 # -----------------------------
 # Resume Support
@@ -82,15 +70,9 @@ for i, row in contributors.iterrows():
 
     owner = OWNER[repo]
 
-    log(
-        f"[{i+1}/{total}] {username} ({repo})"
-    )
+    log(f"[{i+1}/{total}] {username} ({repo})")
 
-    commits = get_recent_commits(
-        owner,
-        repo,
-        username
-    )
+    commits = get_recent_commits(owner, repo, username)
 
     if len(commits) == 0:
 
@@ -101,29 +83,18 @@ for i, row in contributors.iterrows():
     dates = commit_dates(commits)
 
     result = {
-
         "repository": repo,
-
         "username": username,
-
         "recent_commits": len(commits),
-
         "first_commit": dates[0],
-
         "last_commit": dates[-1],
-
         "avg_gap_days": average_gap_days(dates),
-
-        "commit_frequency": commit_frequency(dates)
-
+        "commit_frequency": commit_frequency(dates),
     }
 
     results.append(result)
 
-    pd.DataFrame(results).to_csv(
-        output_file,
-        index=False
-    )
+    pd.DataFrame(results).to_csv(output_file, index=False)
 
 # -----------------------------
 # Finish

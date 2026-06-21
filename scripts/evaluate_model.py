@@ -13,7 +13,7 @@ y = df["status"]
 
 # Encode labels (IMPORTANT FIX)
 le = LabelEncoder()
-y_encoded = le.fit_transform(y)  
+y_encoded = le.fit_transform(y)
 # Active = 0/1 depending on alphabet order
 
 # Split

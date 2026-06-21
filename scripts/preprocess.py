@@ -40,9 +40,7 @@ df["last_commit"] = pd.to_datetime(df["last_commit"], utc=True)
 
 today = datetime.now(timezone.utc)
 
-df["days_since_last_commit"] = (
-    today - df["last_commit"]
-).dt.days
+df["days_since_last_commit"] = (today - df["last_commit"]).dt.days
 
 # -------------------------------------------------
 # Contributor Status
@@ -56,10 +54,7 @@ df["status"] = df["days_since_last_commit"].apply(
 # Save cleaned data
 # -------------------------------------------------
 
-df.to_csv(
-    "data/processed/contributors_processed.csv",
-    index=False
-)
+df.to_csv("data/processed/contributors_processed.csv", index=False)
 
 print("\nProcessed Data")
 print(df.head())

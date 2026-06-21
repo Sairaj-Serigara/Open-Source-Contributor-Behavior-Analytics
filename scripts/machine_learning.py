@@ -5,11 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    classification_report
-)
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 # ---------------------------------------------------
 # Load Dataset
@@ -26,10 +22,7 @@ print(df[df["days_since_last_commit"] < 365]["status"].value_counts())
 # print(df.head())
 
 # Convert target to numeric
-df["status"] = df["status"].map({
-    "Active": 1,
-    "Inactive": 0
-})
+df["status"] = df["status"].map({"Active": 1, "Inactive": 0})
 
 # Check for missing values
 print("\nMissing Values")
@@ -39,12 +32,7 @@ print(df.isna().sum())
 # Features & Target
 # ---------------------------------------------------
 
-X = df[
-    [
-        "contributions",
-        "days_since_last_commit"
-    ]
-]
+X = df[["contributions", "days_since_last_commit"]]
 
 y = df["status"]
 
@@ -53,10 +41,7 @@ y = df["status"]
 # ---------------------------------------------------
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.2,
-    random_state=42
+    X, y, test_size=0.2, random_state=42
 )
 
 # ---------------------------------------------------
@@ -65,17 +50,11 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 model = LogisticRegression()
 
-model.fit(
-    X_train,
-    y_train
-)
+model.fit(X_train, y_train)
 
 predictions = model.predict(X_test)
 
-accuracy = accuracy_score(
-    y_test,
-    predictions
-)
+accuracy = accuracy_score(y_test, predictions)
 
 print("\n" + "=" * 50)
 print("LOGISTIC REGRESSION")
@@ -84,36 +63,22 @@ print("=" * 50)
 print(f"Accuracy : {accuracy:.4f}")
 
 print("\nConfusion Matrix")
-print(confusion_matrix(
-    y_test,
-    predictions
-))
+print(confusion_matrix(y_test, predictions))
 
 print("\nClassification Report")
-print(classification_report(
-    y_test,
-    predictions
-))
+print(classification_report(y_test, predictions))
 
 # ---------------------------------------------------
 # Random Forest
 # ---------------------------------------------------
 
-rf_model = RandomForestClassifier(
-    random_state=42
-)
+rf_model = RandomForestClassifier(random_state=42)
 
-rf_model.fit(
-    X_train,
-    y_train
-)
+rf_model.fit(X_train, y_train)
 
 rf_predictions = rf_model.predict(X_test)
 
-rf_accuracy = accuracy_score(
-    y_test,
-    rf_predictions
-)
+rf_accuracy = accuracy_score(y_test, rf_predictions)
 
 print("\n" + "=" * 50)
 print("RANDOM FOREST")
@@ -122,16 +87,10 @@ print("=" * 50)
 print(f"Accuracy : {rf_accuracy:.4f}")
 
 print("\nConfusion Matrix")
-print(confusion_matrix(
-    y_test,
-    rf_predictions
-))
+print(confusion_matrix(y_test, rf_predictions))
 
 print("\nClassification Report")
-print(classification_report(
-    y_test,
-    rf_predictions
-))
+print(classification_report(y_test, rf_predictions))
 
 # ---------------------------------------------------
 # Model Comparison
@@ -155,26 +114,16 @@ else:
     best_model = model
     best_name = "Logistic Regression"
 
-joblib.dump(
-    best_model,
-    "outputs/best_model.pkl"
-)
+joblib.dump(best_model, "outputs/best_model.pkl")
 
 print("\nBest Model :", best_name)
 print("Model saved successfully to outputs/best_model.pkl")
 
 
-
 print(".........................................................")
 
 print(
-    df[
-        (df["days_since_last_commit"] < 365) &
-        (df["status"] == 0)
-    ][
-        ["username",
-         "contributions",
-         "days_since_last_commit",
-         "status"]
+    df[(df["days_since_last_commit"] < 365) & (df["status"] == 0)][
+        ["username", "contributions", "days_since_last_commit", "status"]
     ]
 )
