@@ -29,15 +29,11 @@ if st.button("Show Top Contributors"):
 
     # Metrics
     c1, c2, c3 = st.columns(3)
-
     c1.metric("Highest Score", round(top["activity_score"].max(), 2))
-
     c2.metric("Average Score", round(top["activity_score"].mean(), 2))
-
     c3.metric("Repositories", top["repository"].nunique())
 
     st.divider()
-
     # Chart
     fig = px.bar(
         top,
@@ -56,9 +52,6 @@ if st.button("Show Top Contributors"):
     )
 
     st.plotly_chart(fig, use_container_width=True)
-
     st.divider()
-
     st.subheader("Contributor Ranking")
-
     st.dataframe(top, use_container_width=True)
