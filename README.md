@@ -125,14 +125,4 @@ streamlit run app.py
 
 ---
 
-## 📁 Data Pipeline
-
-1. Collect contributor data from GitHub repositories.
-2. Extract commits, pull requests, and issues.
-3. Perform feature engineering.
-4. Generate repository summaries and contributor rankings.
-5. Visualize insights using the Streamlit dashboard.
-
----
-
 
