@@ -1,18 +1,11 @@
 import pandas as pd
-
 contributors = pd.read_csv("data/raw/contributors_raw.csv")
-
 commits = pd.read_csv("data/raw/commits.csv")
-
 prs = pd.read_csv("data/raw/contributor_prs.csv")
-
 issues = pd.read_csv("data/raw/contributor_issues.csv")
-
 # Merge everything
 df = contributors.merge(commits, on=["repository", "username"], how="left")
-
 df = df.merge(prs, on=["repository", "username"], how="left")
-
 df = df.merge(issues, on=["repository", "username"], how="left")
 
 # Fill numeric values

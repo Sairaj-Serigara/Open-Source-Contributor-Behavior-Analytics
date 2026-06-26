@@ -11,64 +11,39 @@ REPOSITORIES = [
 
 
 def get_commit_history(owner, repo, username, max_commits=200):
-
     commits = []
-
     page = 1
-
     while len(commits) < max_commits:
-
         url = f"{BASE_URL}/repos/{owner}/{repo}/commits"
-
         params = {"author": username, "per_page": 100, "page": page}
-
         data = github_get(url, params)
-
         if not data:
             break
-
         commits.extend(data)
-
         if len(data) < 100:
             break
-
         page += 1
-
     return commits[:max_commits]
 
 
 rows = []
-
 for owner, repo in REPOSITORIES:
-
     print(f"\nRepository : {repo}")
-
     contributors = get_contributors(owner, repo)
-
     for contributor in contributors:
-
         username = contributor["username"]
-
         print("Collecting:", username)
-
         commits = get_commit_history(owner, repo, username)
-
         if len(commits) == 0:
             continue
-
         dates = [c["commit"]["author"]["date"] for c in commits]
 
         dates = sorted(pd.to_datetime(dates))
-
         first_commit = dates[0]
         last_commit = dates[-1]
-
         days_span = max((last_commit - first_commit).days, 1)
-
         commit_frequency = round(len(commits) / days_span, 3)
-
         gaps = []
-
         for i in range(1, len(dates)):
             gaps.append((dates[i] - dates[i - 1]).days)
 

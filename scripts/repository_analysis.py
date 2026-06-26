@@ -1,15 +1,12 @@
 import os
 import pandas as pd
 
-# ----------------------------
+
 # Load data
-# ----------------------------
 
 df = pd.read_csv("data/processed/contributor_features.csv")
 
-# ----------------------------
 # Repository summary
-# ----------------------------
 
 summary = (
     df.groupby("repository")
@@ -30,9 +27,7 @@ summary = (
     .reset_index()
 )
 
-# ----------------------------
 # Overall repository score
-# ----------------------------
 
 summary["repository_score"] = (
     summary["avg_commit_frequency"] * 0.30
@@ -43,14 +38,10 @@ summary["repository_score"] = (
 
 summary = summary.sort_values("repository_score", ascending=False)
 
-# ----------------------------
 # Save
-# ----------------------------
 
 os.makedirs("outputs", exist_ok=True)
-
 summary.to_csv("outputs/repository_summary.csv", index=False)
-
 print("\nRepository Summary\n")
 print(summary)
 

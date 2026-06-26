@@ -21,15 +21,11 @@ def github_get(endpoint, params=None):
             response = requests.get(
                 url, headers=HEADERS, params=params, timeout=REQUEST_TIMEOUT
             )
-            # -------------------------
             # Success
-            # -------------------------
             if response.status_code == 200:
                 return response.json()
 
-            # -------------------------
             # Rate Limit
-            # -------------------------
             if response.status_code == 403:
                 remaining = response.headers.get("X-RateLimit-Remaining")
                 if remaining == "0":
@@ -44,11 +40,8 @@ def github_get(endpoint, params=None):
 
             print(f"GitHub Error {response.status_code}")
             return None
-
         except requests.exceptions.RequestException:
-
             print(f"Retry {attempt + 1}/{MAX_RETRIES}")
-
             time.sleep(RETRY_DELAY)
 
     return None
@@ -59,13 +52,9 @@ def get_recent_commits(owner, repo, username):
     Returns up to MAX_COMMITS recent commits
     made by one contributor.
     """
-
     commits = []
-
     pages = MAX_COMMITS // PER_PAGE
-
     for page in range(1, pages + 1):
-
         data = github_get(
             f"/repos/{owner}/{repo}/commits",
             params={"author": username, "per_page": PER_PAGE, "page": page},
@@ -73,29 +62,22 @@ def get_recent_commits(owner, repo, username):
 
         if not data:
             break
-
         commits.extend(data)
-
         if len(data) < PER_PAGE:
             break
-
     return commits
 
 
 def get_repository_pull_requests(owner, repo, max_prs=1000):
-
     cache_dir = "data/raw/pr_cache"
     os.makedirs(cache_dir, exist_ok=True)
-
     cache_file = os.path.join(cache_dir, f"{repo}_prs.json")
 
     # -----------------------------
     # Load cache if available
     # -----------------------------
     if os.path.exists(cache_file):
-
         print(f"Loading cached PRs for {repo}")
-
         with open(cache_file, "r", encoding="utf-8") as f:
             return json.load(f)
 
@@ -103,16 +85,11 @@ def get_repository_pull_requests(owner, repo, max_prs=1000):
     # Download from GitHub
     # -----------------------------
     prs = []
-
     per_page = 100
     pages = max_prs // per_page
-
     for page in range(1, pages + 1):
-
         print(f"Downloading {repo} PR page {page}")
-
         endpoint = f"/repos/{owner}/{repo}/pulls"
-
         params = {
             "state": "all",
             "sort": "updated",
@@ -122,18 +99,13 @@ def get_repository_pull_requests(owner, repo, max_prs=1000):
         }
 
         data = github_get(endpoint, params)
-
         if not data:
             break
-
         prs.extend(data)
-
         if len(data) < per_page:
             break
-
-    # -----------------------------
     # Save cache
-    # -----------------------------
+    
     with open(cache_file, "w", encoding="utf-8") as f:
         json.dump(prs, f)
 
@@ -147,9 +119,8 @@ def get_repository_issues(owner, repo, max_issues=1000):
     os.makedirs(cache_dir, exist_ok=True)
     cache_file = os.path.join(cache_dir, f"{repo}_issues.json")
 
-    # -----------------------------
     # Load cache
-    # -----------------------------
+    
     if os.path.exists(cache_file):
         print(f"Loading cached issues for {repo}")
         with open(cache_file, "r", encoding="utf-8") as f:
